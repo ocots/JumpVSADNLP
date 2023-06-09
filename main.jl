@@ -1,5 +1,6 @@
 using ADNLPModels, JuMP, Ipopt, Plots, MINPACK, NLPModelsIpopt, CTBase, CTDirect
 using CTBase:Model
+using Profile
 
 include("solve_jump.jl")
 include("solve_mathopt.jl")
@@ -32,6 +33,11 @@ mf = 0.6
     mf ≤ m[1:N+1] ≤ m0            # m
     0.0 ≤ u[1:N+1] ≤ 1.0          # u
 end)
+set_start_value(Δt, 0.1/30)
+set_start_value(r[1], 0.1)
+set_start_value(v[1], 0.1)
+set_start_value(m[1], 0.1)
+set_start_value(u[1], 0.1)
 
 # Objective
 @objective(sys, Max, r[N+1])
@@ -106,9 +112,16 @@ f(x, u) = F0(x) + u*F1(x)
     r(tf) → max
 end
 
+OptimalControlInit([0.1,0.1,0.1],0.1,0.1)
+
 println("\nJUMP resolution\n")
-jump_solve(sys)
+@time jump_solve(sys)
 println("\nJUMP -> MathOptNLPModel NLPModelsIpopt resolution\n")
-mathopt_solve(sys)
+@time mathopt_solve(sys)
 println("\nCTDirect OCPModel -> ADNLPModel NLPModelsIpopt resolution\n")
-CTDirect.solve(ocp,grid_size=30)
+
+Profile.init(10000000,0.0001)
+
+@profile CTDirect.solve(ocp,grid_size=30,init=OptimalControlInit([0.1,0.1,0.1],0.1,0.1))
+
+open(Profile.print, "results/temp", "w")
