@@ -127,6 +127,8 @@ function con_fun(xuv)
 end 
 adnlp = ADNLPModel(obj_fun,xuv0,l_var,u_var,con_fun,lb,ub)
 solver = IpoptSolver(adnlp)
+@time ipopt_solution = NLPModelsIpopt.solve!(solver,adnlp,print_level=5)
+println(ipopt_solution.solution[end])
 
 # println("\nJUMP resolution\n")
 # @time jump_solve(sys)
@@ -139,7 +141,5 @@ solver = IpoptSolver(adnlp)
 
 # open(Profile.print, "results/temp", "w")
 
-# @time ipopt_solution = NLPModelsIpopt.solve!(solver,adnlp,print_level=5)
-# println(ipopt_solution.solution[end])
 
-@time sol = adnlp_solve(sys)
+#@time sol = adnlp_solve(sys)

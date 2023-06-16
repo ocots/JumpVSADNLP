@@ -12,7 +12,7 @@ function adnlp_solve(sys)
     u_var = NLPModels.get_uvar(monlp)
     l_con = NLPModels.get_lcon(monlp)
     u_con = NLPModels.get_ucon(monlp)
-    adnlp_t = ADNLPModel(obj_fun, xu0, l_var, u_var, con_fun, l_con, u_con; gradient_backend = ADNLPModels.ZygoteADGradient)
+    adnlp_t = ADNLPModel(obj_fun, xu0, l_var, u_var, con_fun, l_con, u_con)
     solver = IpoptSolver(adnlp_t)
     ipopt_solution = NLPModelsIpopt.solve!(solver, adnlp_t, tol = 1e-12, mu_strategy="adaptive", sb="yes")
 end
