@@ -1,3 +1,7 @@
+For the ADNLP raw model only the main is useful. 
+
+
+
 Quick benchmarking for CTDirect
 
 Tools :
