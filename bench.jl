@@ -1,6 +1,8 @@
 using ADNLPModels
 using NLPModels
 using NLPModelsJuMP
+using BenchmarkTools
+using JuMP
 
 # parameters
 n=2
@@ -14,7 +16,7 @@ N = 30
 # adnlp model
 obj_fun(xuv) = xuv[end] # objectiv
 dim_v = (N+1)*(2+1) + 1 # dimension of vector xu+v
-xuv0 = fill(0.1,dim_v)
+xuv0 = fill(0.1, dim_v)
 l_var = -Inf*ones(dim_v)
 u_var = Inf*ones(dim_v)
 for i ∈ 1:dim_v # variable bounds
@@ -97,16 +99,20 @@ jump_nlp = MathOptNLPModel(sys)
 
 println("Hessian of Lagrangian")
 println("ADNLP")
-@time hess(adnlp, xuv0, λa); # Hessian of Lagrangian
+hess(adnlp, xuv0, λa)
+@btime hess(adnlp, xuv0, λa)
 println("JuMP")
-@time hess(jump_nlp, xuv0, λj); # Hessian of Lagrangian
+hess(jump_nlp, xuv0, λj)
+@btime hess(jump_nlp, xuv0, λj); # Hessian of Lagrangian
 
 # compare jacobian of constraints
 println("Jacobian of constraints")
 println("ADNLP")
-@time jac(adnlp, xuv0); # Jacobian of constraints
+jac(adnlp, xuv0)
+@btime jac(adnlp, xuv0) # Jacobian of constraints
 println("JuMP")
-@time jac(jump_nlp, xuv0); # Jacobian of constraints
+jac(jump_nlp, xuv0)
+@btime jac(jump_nlp, xuv0); # Jacobian of constraints
 
 #
 nothing
