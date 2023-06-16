@@ -4,6 +4,8 @@ using NLPModelsJuMP
 using BenchmarkTools
 using JuMP
 
+# we compare this problem: https://control-toolbox.org/CTProblems.jl/stable/problems/double_integrator_time.html#DIT
+
 # parameters
 n=2
 m=1
