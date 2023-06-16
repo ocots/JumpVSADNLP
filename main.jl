@@ -1,11 +1,12 @@
-using ADNLPModels, JuMP, Ipopt, Plots, MINPACK, NLPModelsIpopt, CTBase, CTDirect
+using ADNLPModels, JuMP, Ipopt, NLPModelsIpopt, CTBase
 using CTBase:Model
 using Profile
 
-include("solve_jump.jl")
-include("solve_mathopt.jl")
-include("solve_adnlp.jl")
+#include("solve_jump.jl")
+#include("solve_mathopt.jl")
+#include("solve_adnlp.jl")
 
+#=
 #JuMP model, Ipopt solver
 sys = JuMP.Model(optimizer_with_attributes(Ipopt.Optimizer,"print_level"=> 5))
 set_optimizer_attribute(sys,"tol",1e-8)
@@ -54,7 +55,7 @@ end);
 
 
 OptimalControlInit([0.1,0.1,0.1],0.1,0.1)
-
+=#
 
 # f(x) = (x[1] - 1.0)^2 + 100*(x[2] - x[1]^2)^2
 # x0 = [-1.2; 1.0]
