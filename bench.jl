@@ -40,9 +40,8 @@ lb[1:2] = x0
 lb[(N+1)*2-1:(N+1)*2] = xf
 ub[1:2] = x0
 ub[(N+1)*2-1:(N+1)*2] = xf
-function con_fun(xuv) 
+function con_fun(c, xuv) 
     h = (xuv[end]-t0)/N
-    c = zeros(eltype(xuv),2*(N+1))
     xi = xuv[1:2] # state at time 0
     ui = xuv[2*(N+1)+1] # control at time 0
     index = 1
@@ -57,7 +56,7 @@ function con_fun(xuv)
     end
     return(c)
 end 
-adnlp = ADNLPModel(obj_fun, xuv0, l_var, u_var, con_fun, lb, ub)
+adnlp = ADNLPModel!(obj_fun, xuv0, l_var, u_var, con_fun, lb, ub)
 
 λa = ones(length(con_fun(xuv0))) # Lagrange multipliers   
 
