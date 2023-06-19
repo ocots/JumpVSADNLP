@@ -45,7 +45,7 @@ function con_fun(c, xuv)
     xi = xuv[1:2] # state at time 0
     ui = xuv[2*(N+1)+1] # control at time 0
     index = 1
-    for i ∈ 0:N-1   
+    for i ∈ 0:N   
         xip1 = xuv[((i+1)*2+1):((i+1)*2+2)] # state at time i+1
         uip1 = xuv[2*(N+1)+(i+1)+1] # control at time i+1
         c[index] = xip1[1] - (xi[1] + 0.5*h*(xi[2] + xip1[2]))
@@ -58,7 +58,7 @@ function con_fun(c, xuv)
 end 
 adnlp = ADNLPModel!(obj_fun, xuv0, l_var, u_var, con_fun, lb, ub)
 
-λa = ones(length(con_fun(xuv0))) # Lagrange multipliers   
+λa = ones(adnlp.meta.ncon) # Lagrange multipliers   
 
 # jump model
 sys = JuMP.Model()
@@ -96,7 +96,7 @@ JuMP.@NLconstraints(sys, begin
 end);
 
 jump_nlp = MathOptNLPModel(sys)
-λj = ones(length(cons(jump_nlp, xuv0))) # Lagrange multipliers
+λj = ones(jump_nlp.meta.ncon) # Lagrange multipliers
 
 println("Hessian of Lagrangian")
 println("ADNLP")
