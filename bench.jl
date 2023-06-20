@@ -9,7 +9,7 @@ using JuMP
 # parameters
 n=2
 m=1
-t0=0
+t0=0.0
 x0=[-1, 0]
 xf=[0, 0]
 γ = 1
@@ -40,14 +40,13 @@ lb[1:2] = x0
 lb[(N+1)*2-1:(N+1)*2] = xf
 ub[1:2] = x0
 ub[(N+1)*2-1:(N+1)*2] = xf
-function con_fun(xuv) 
+function con_fun(c, xuv, t0::Float64 = t0, N::Int = N) 
     h = (xuv[end]-t0)/N
-    c = zeros(eltype(xuv),2*(N+1))
-    xi = xuv[1:2] # state at time 0
+    xi = view(xuv, 1:2) # state at time 0
     ui = xuv[2*(N+1)+1] # control at time 0
     index = 1
-    for i ∈ 0:N-1   
-        xip1 = xuv[((i+1)*2+1):((i+1)*2+2)] # state at time i+1
+    for i = 0:N   
+        xip1 = view(xuv, ((i+1)*2+1):((i+1)*2+2)) # state at time i+1
         uip1 = xuv[2*(N+1)+(i+1)+1] # control at time i+1
         c[index] = xip1[1] - (xi[1] + 0.5*h*(xi[2] + xip1[2]))
         c[index+1] = xip1[2] - (xi[2] + 0.5*h*(ui + uip1))
@@ -57,9 +56,15 @@ function con_fun(xuv)
     end
     return(c)
 end 
-adnlp = ADNLPModel(obj_fun, xuv0, l_var, u_var, con_fun, lb, ub)
+# Check that it doesn't allocate
+cx = similar(lb)
+con_fun(cx, xuv0)
+a = @allocated con_fun(cx, xuv0)
+@assert a == 0
 
-λa = ones(length(con_fun(xuv0))) # Lagrange multipliers   
+adnlp = ADNLPModel!(obj_fun, xuv0, l_var, u_var, con_fun, lb, ub)
+
+λa = ones(adnlp.meta.ncon) # Lagrange multipliers  
 
 # jump model
 sys = JuMP.Model()
@@ -97,7 +102,7 @@ JuMP.@NLconstraints(sys, begin
 end);
 
 jump_nlp = MathOptNLPModel(sys)
-λj = ones(length(cons(jump_nlp, xuv0))) # Lagrange multipliers
+λj = ones(jump_nlp.meta.ncon) # Lagrange multipliers
 
 println("Hessian of Lagrangian")
 println("ADNLP")
