@@ -35,14 +35,12 @@ function get_adnlp_model_ct()
         h = (xuv[end]-t0)/N
         xi = view(xuv, 1:2) # state at time 0
         ui = xuv[2*(N+1)+1] # control at time 0
-        index = 1
         offset =  4
         for i = 1:N   
             xip1 = view(xuv, ((i+1)*2-1):((i+1)*2)) # state at time i+1
             uip1 = xuv[2*(N+1)+i+1] # control at time i+1
-            c[offset + index] = xip1[1] - (xi[1] + 0.5*h*(xi[2] + xip1[2]))
-            c[offset + index + 1] = xip1[2] - (xi[2] + 0.5*h*(ui + uip1))
-            index = index + 2
+            c[offset + i] = xip1[1] - (xi[1] + 0.5*h*(xi[2] + xip1[2]))
+            c[offset + i + N] = xip1[2] - (xi[2] + 0.5*h*(ui + uip1))
             xi = xip1
             ui = uip1
         end
@@ -58,7 +56,7 @@ function get_adnlp_model_ct()
 
     adnlp = ADNLPModel!(obj_fun, xuv0, l_var, u_var, con_fun, lb, ub)
 
-    λa = ones(adnlp.meta.ncon) # Lagrange multipliers  
+    λa = [Float64(i) for i = 1:adnlp.meta.ncon]#ones(adnlp.meta.ncon) # Lagrange multipliers  
     
     return adnlp, λa, xuv0
 end
@@ -101,7 +99,7 @@ function get_jump_model_ct()
     end);
 
     jump_nlp = MathOptNLPModel(sys)
-    λj = ones(jump_nlp.meta.ncon) # Lagrange multipliers
+    λj = [Float64(i) for i = 1:jump_nlp.meta.ncon] #ones(jump_nlp.meta.ncon) # Lagrange multipliers
 
     return jump_nlp, λj, nothing
 
