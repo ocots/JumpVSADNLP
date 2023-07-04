@@ -12,22 +12,20 @@ include("get_models.jl")
 adnlp, λa, xuv0  = get_adnlp_model_ct()
 jump_nlp, λj, _  = get_jump_model_ct()
 
-println("Hessian of Lagrangian")
 println("JuMP")
+println("Hessian of Lagrangian")
 hess(jump_nlp, xuv0, λj)
 @btime hess(jump_nlp, xuv0, λj); # Hessian of Lagrangian
 println("Jacobian of constraints")
-println("JuMP")
 jac(jump_nlp, xuv0)
 @btime jac(jump_nlp, xuv0); # Jacobian of constraints
 
 
-println("Hessian of Lagrangian")
 println("ADNLP")
+println("Hessian of Lagrangian")
 hess(adnlp, xuv0, λa)
 @btime hess(adnlp, xuv0, λa)
 println("Jacobian of constraints")
-println("ADNLP")
 jac(adnlp, xuv0)
 @btime jac(adnlp, xuv0) 
 
