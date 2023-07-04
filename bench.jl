@@ -3,7 +3,6 @@ using NLPModels
 using NLPModelsJuMP
 using BenchmarkTools
 using JuMP
-using NLPModelsIpopt
 using LinearAlgebra
 
 # we compare this problem: https://control-toolbox.org/CTProblems.jl/stable/problems/double_integrator_time.html#DIT
@@ -33,10 +32,3 @@ jac(adnlp, xuv0)
 @btime jac(adnlp, xuv0) 
 
 println("Norm of difference between jump and adnlp hessians = ",norm(hess(adnlp, xuv0, λa) .- hess(jump_nlp, xuv0, λj)))
-
-solver_jp = IpoptSolver(jump_nlp)
-ipopt_solution_jp = NLPModelsIpopt.solve!(solver_jp, jump_nlp, tol = 1e-12, mu_strategy="adaptive", sb="yes", print_level = 0)
-
-solver_ad = IpoptSolver(adnlp)
-ipopt_solution_ad = NLPModelsIpopt.solve!(solver_ad, adnlp, tol = 1e-12, mu_strategy="adaptive", sb="yes", print_level = 0)
-println("Norm of objectiv difference = ",norm(ipopt_solution_ad.solution[end]-ipopt_solution_jp.solution[end]))
