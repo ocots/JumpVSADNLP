@@ -1,3 +1,4 @@
+using Symbolics
 using ADNLPModels
 using NLPModels
 using NLPModelsJuMP
@@ -62,7 +63,7 @@ con_fun(cx, xuv0)
 a = @allocated con_fun(cx, xuv0)
 @assert a == 0
 
-adnlp = ADNLPModel!(obj_fun, xuv0, l_var, u_var, con_fun, lb, ub)
+adnlp = ADNLPModel!(obj_fun, xuv0, l_var, u_var, con_fun, lb, ub, backend = :optimized)
 
 λa = ones(adnlp.meta.ncon) # Lagrange multipliers  
 
