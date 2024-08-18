@@ -1,4 +1,3 @@
-using Symbolics
 using ADNLPModels
 using NLPModels
 using NLPModelsJuMP
