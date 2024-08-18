@@ -6,4 +6,7 @@ BenchmarkTools = "6e4b80f9-dd63-53aa-95a3-0cdb28fa8baf"
 JuMP = "4076af6c-e467-56ae-b986-b466b2749572"
 NLPModels = "a4795742-8479-5a88-8948-cc11e1c8c1a6"
 NLPModelsJuMP = "792afdf1-32c1-5681-94e0-d7bf7a5df49e"
-Symbolics = "0c5d862f-8b57-4792-8d23-62f2024744c7"
+
+[compat]
+ADNLPModels = "0.8.7"
+NLPModelsJuMP = "0.13.1"
